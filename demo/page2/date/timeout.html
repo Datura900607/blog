@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="datura"/>
+    <meta name="copyright" content="版权"/>
+    <meta name="description" content="描述"/>
+    <meta name="keywords" content="关键字"/>
+    <title>倒计时</title>
+    <style>
+        body{
+            text-align: center;
+            background: greenyellow;
+            font-size: 60px;
+            color: #fff;
+        }
+
+    </style>
+    <script>
+        window.onload = function (){
+            var oBox = document.getElementById('box');
+            var timer = null;
+            var n = null;
+            showTime();
+            timer = setInterval(showTime,1000);
+            function showTime () {
+                var iNow = new Date();
+                var iNew = new Date('January,1,2017 0:0:0');
+                var str = iNew - iNow;
+                var str_s = Math.floor(str/1000);
+                if(str>0){
+                    oBox.innerHTML = Math.floor(str_s/86400)+'天'+Math.floor(str_s%86400/3600)+'时'+ Math.floor(str_s%86400%3600/60)+'分'+str_s%60+'秒';
+                } else {
+                    clearInterval(timer);
+                    alert('倒计时已经结束！');
+                }
+                return str;
+            }
+        };
+    </script>
+</head>
+<body>
+距离2017年1月1日
+<div id="box">还有X天X时X分X秒</div>
+</body>
+</html>

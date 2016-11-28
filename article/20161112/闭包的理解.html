@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="keywords" content="闭包,Javascript," />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../item/images/bitbug_favicon.ico" />
+    <meta name="description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;作为一个JS的初学者，闭包和作用域感觉一直都很难弄。JavaScript高级程序设计上关于闭包的内容很少，这里参考前人的博客，对于JS中的闭包做一个理解。">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Js中闭包的理解">
+    <meta property="og:site_name" content="datura">
+    <meta property="og:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;作为一个JS的初学者，闭包和作用域感觉一直都很难弄。JavaScript高级程序设计上关于闭包的内容很少，这里参考前人的博客，对于JS中的闭包做一个理解。">
+    <meta property="og:updated_time" content="2016-11-11T06:42:12.000Z">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Js中闭包的理解">
+    <meta name="twitter:description" content="&amp;#160; &amp;#160; &amp;#160; &amp;#160;作为一个JS的初学者，闭包和作用域感觉一直都很难弄。JavaScript高级程序设计上关于闭包的内容很少，这里参考前人的博客，对于JS中的闭包做一个理解。">
+    <title> Js中闭包的理解 | datura </title>
+    <link rel="stylesheet" type="text/css" href="../../../item/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="bibao.css">
+</head>
+<body>
+    <div class="pages">
+        <div class="header">
+            <div class="title clearFix">
+                <div class="logo">
+                    <h3>Black  Datura</h3>
+                    <p>一只程序猿的禅意生活</p>
+                </div>
+                <ul>
+                    <li><a href="../../../item/index.html">首页</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="main">
+            <header class="common_title">
+                <h3>JS中闭包的理解</h3>
+                <h4>
+                    <span>发表于<b>2016-11-12</b></span>
+                    <span>分类于前端；javascript</span>
+                </h4>
+            </header>
+            <section class="content">
+                <div class="content_title">作为一个JS的初学者，闭包和作用域感觉一直都很难弄。JavaScript高级程序设计上关于闭包的内容很少，这里参考前人博客，对于JS中的闭包做一个理解</div>
+                <article>
+                    <h4 class="define_bb">什么是闭包</h4>
+                    <p class="part">提到闭包之前，我想先说一个作用域的问题。我认为JS很奇妙的一点就是，设定了作用域这么一个玩意，我们都知道JS中变量分为全局变量和局部变量，局部作用域中可以访问全局作用域中变量，而全局作用域中则不能访问局部作用域中的变量。举个例子：</p>
+                    <pre>
+                        var a = 1;
+                        function arr(){
+                            var b = a;
+                            console.log(b);//1
+                            return b;
+                        }
+                        arr();
+                        console.log(b);//undefined
+                        var b//变量提升
+                    </pre>
+                    <p class="part">上面这个例子中就能看出在函数arr中，我们新建了一个变量b，把a的值赋给b。因为JS中存在函数作用域，在这个局部作用域中没有找到a，到他的上一层作用域(这里是全局作用域)找到a，并赋值给b，然后返回一直b，在控制台中输出b。</p>
+                    <p class="part"><b>这里就用到了闭包的知识，简单来说闭包就是：</b></p>
+                    <h4 class="part">闭包就是在一个函数中穿件一个新的函数，使得外接有权访问这个函数作用域中的参数和变量。（相当于使得我们就读取其他函数内部的一个函数。）</h4>
+                    <h3 class="define_bb">闭包的弊端</h3>
+                    <p class="part">因为这个F函数中的一个函数F1被return推送到全局作用域中，使得这个函数在全剧终能被调用，而f1的能被执行是建立在F的条件下的。因为F1在全局作用域中，不会再执行结束后销毁。就导致F函数也不会被回收。</p>
+                    <p>就好比，一个麻袋里面被我们迁出一个绳子，我们可以顺着绳子去从麻袋里面调用东西。因为绳子栓着，麻袋也就不会跑路。</p>
+                    <p>所以闭包的第一个弊端就是：变量无法自动被回收，久而久之造成内存泄露。</p>
+                    <h4>闭包的几个例子</h4>
+                    <pre>
+                        var fnArr = [];
+                        for(var i=0;i<10;i++){
+                            fnArr[i] = function (){
+                                return i;
+                            };
+                        }
+                        console.log(fnArr[3]());//10
+                        console.log(fnArr[6]());//10
+                    </pre>
+                    <p>这里还有两种方法</p>
+                    <pre>
+                        var fnArr = [];
+                        for (var i=0;i<10;i++){
+                            fnArr[i] = function (){
+                                var n =i;
+                                return function (){
+                                    return n;
+                                }
+                            }();
+                        }
+                        console.log(fnArr[3]());//10
+                    </pre>
+                    <p>第二种</p>
+                    <pre>
+                         var fnArr = [];
+                            for (var i=0;i<10;i++){
+                                (function(){
+                                    var n=i;
+                                    return fnArr[i] = function(){
+                                        return n;
+                                    }
+                                })()
+                            }
+                            console.log(fnArr[3]());//10
+                    </pre>
+                    <p>这两种方法都是利用自执行函数来实现一个闭包</p>
+                    <p class="consult">参考：阮一峰-JS闭包</p>
+                </article>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
